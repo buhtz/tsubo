@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 """
-    SHAKE create random filenames for existing files.
+    Tsubo create random filenames for existing files.
 """
 
 __author__ = 'Christian Buhtz'
@@ -10,7 +10,7 @@ __maintainer__ = __author__
 __email__ = 'c.buhtz@posteo.jp'
 __license__ = 'GPLv3'
 __version__ = '0.0.1a'
-__app_name__ = 'SHAKE'
+__app_name__ = 'Tsubo'
 
 #   This program is free software: you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by
@@ -42,9 +42,7 @@ def _GetFiles(dirs, include):
             files += glob.glob(d + os.sep + i)
     return files
 
-
-if __name__ == '__main__':
-    # read commandline arguments
+def _CreateArgParser():
     parser = argparse.ArgumentParser(
                 description='{} {} -- Create random file names out of existing ones in the current directory.'
                 .format(__app_name__, __version__),
@@ -53,12 +51,6 @@ if __name__ == '__main__':
     parser.add_argument('include', metavar='INCLUDE_PATTERN', type=str,
                         help='Specify the files to include with a wildcard-mask. It can be a list'\
                         'seperated by {}.'.format(os.pathsep))
-    # --recursive, -r, -R
-    parser.add_argument('-r', '--recursive', action='store_true', dest='argRecursiv',
-                       help='Do the job recursivly through the sub-directories.')
-    # --action
-    # --no-rm-security-question
-    # --no-mv-security-question
     # --input-dir, -i
     parser.add_argument('-i', '--input-dir', metavar='DIR', dest='inputDir',
                         default=os.path.abspath(os.curdir), type=str,
@@ -69,7 +61,29 @@ if __name__ == '__main__':
                        help='Use the specified directory for output.')
     group.add_argument('-cwd', '--output-cwd', dest='outputCwd', action='store_true',
                        help='Use the current working directory as output directory.')
+    # --recursive, -r, -R
+    parser.add_argument('-r', '--recursive', action='store_true', dest='argRecursiv',
+                       help='Do the job recursivly through the sub-directories.')
+    # outfile
+    # TODO
 
+    # --action
+    parser.add_argument('--action', metavar='CMD', dest='action', type=str,
+                        help='Use this with care! Will execute CMD given the original filename as '\
+                        'first and the new filename as second argument.')
+    # --no-rm-security-question
+    parser.add_argument('--no-rm-security-question', action='store_true', dest='noaskRM',
+                        help='')
+    # --no-mv-security-question
+    parser.add_argument('--no-mv-security-question', action='store_true', dest='noaskMV',
+                        help='')
+    #
+    return parser
+
+
+if __name__ == '__main__':
+    # commandline arguments
+    parser = _CreateArgParser()
     # store all arguments in objects/variables of the local namespace
     locals().update(vars(parser.parse_args()))
 
@@ -86,7 +100,7 @@ if __name__ == '__main__':
             # user (per argument) specified directory for output
             outputDir = os.path.expanduser(os.path.normpath(outputDir))
 
-    # recursive
+    # recursive?
     if argRecursiv == True:
         for root, dirs, names in os.walk(rootDir):
             if '{}.'.format(os.sep) not in root:
@@ -102,6 +116,7 @@ if __name__ == '__main__':
     newFiles = []
     formatStr = '{:0' + str(1+len(str(len(orgFiles)))) + '}'
 
+    # pair the original files with its new names (incl. the absoulute paths) in a tuple
     for org, rnd in zip(orgFiles, randNumbers):
         org_name, org_ext = os.path.splitext(org)
         org_name = org_name.rsplit(os.sep, 1)[0]
@@ -111,8 +126,17 @@ if __name__ == '__main__':
         else:
             newFiles += [ org_name + os.sep + formatStr.format(rnd) + org_ext ]
 
-    for org, new in zip(orgFiles, newFiles):
-        print('{};{}'.format(org, new))
+    # TODO to outfile
+
+    # do an action?
+    if action:
+        if 'rm' in action and not noaskRM:
+
+        print(action)
+    else:
+        # to STDOUT
+        for org, new in zip(orgFiles, newFiles):
+            print('{};{}'.format(org, new))
 
     sys.exit()
 
