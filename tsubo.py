@@ -5,6 +5,7 @@
 """
 
 __author__ = 'Christian Buhtz'
+__website__ = 'https://github.com/buhtz/tsubo'
 __date__ = 'November 2015'
 __maintainer__ = __author__
 __email__ = 'c.buhtz@posteo.jp'
@@ -47,10 +48,10 @@ def _GetFiles(dirs, include):
 def _CreateArgParser():
     """
     """
-    parser = argparse.ArgumentParser(
-                description='{} {} -- Create random file names out of existing ones in the current directory.'
-                .format(__app_name__, __version__),
-                epilog='EPILOG')
+    parser = argparse.ArgumentParser(formatter_class=argparse.RawDescriptionHelpFormatter,
+                description='{} {} -- Create random file names out of existing ones.'
+                            .format(__app_name__, __version__),
+                epilog='  Author:\t{} <{}>\n  Website:\t{}'.format(__author__, __email__, __website__))
     # e.g. '*.mp3' or '*'
     parser.add_argument('include', metavar='INCLUDE_PATTERN', type=str,
                         help='Specify the files to include with a wildcard-mask patter. Enclose it '\
