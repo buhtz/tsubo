@@ -16,4 +16,4 @@ A commandline tool creating random file names out of existing ones written in Py
 # The name
 
 # Contact
-Christian Buhtz <c.buhtz@posteo.jp>
+Christian Buhtz <c.buhtz@posteo.jp> GnuPGP-Key ID 0751A8EC
